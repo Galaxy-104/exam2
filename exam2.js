@@ -4,11 +4,12 @@ const logger = require('morgan')
 const mongoose = require('mongoose')
 const usersRouter = require('./src/routes/users')
 const productsRouter = require('./src/routes/products')
+const config = require('./config')
 
 // mongodb 연결하기
-// mongoose.connect()
-// .then(() => console.log("mongodb connected..."))
-// .catch(e => console.log(`failed to connect mongodb: ${e}`))
+mongoose.connect(config.MONGODB_URL)
+.then(() => console.log("mongodb connected..."))
+.catch(e => console.log(`failed to connect mongodb: ${e}`))
 
 app.use(express.json()) // request body 파싱
 app.use(logger('tiny')) // 로그 기록
