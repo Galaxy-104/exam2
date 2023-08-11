@@ -4,6 +4,7 @@ const logger = require('morgan')
 const mongoose = require('mongoose')
 const usersRouter = require('./src/routes/users')
 const productsRouter = require('./src/routes/products')
+const adminRouter = require('./src/routes/admin')
 const config = require('./config')
 
 // mongodb 연결하기
@@ -17,6 +18,7 @@ app.use(logger('tiny')) // 로그 기록
 // 라우터 핸들러 함수 임포트
 app.use('/api/users', usersRouter)
 app.use('/api/products', productsRouter)
+app.use('/api/admin', adminRouter)
 
 // 에러 처리
 app.use( (req, res, next) => {
