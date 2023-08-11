@@ -1,11 +1,31 @@
 const express = require('express')
 const User = require('../models/User')
 const expressAsyncHandler = require('express-async-handler')
+const { generateToken, isAuth, isAdmin } = require('../../auth')
 
 const router = express.Router()
 
+// 회원가입
 router.post('/register', expressAsyncHandler(async (req, res, next) => {
-    res.json("회원가입")
+    console.log(req.body)
+    const user = new User({
+        name: req.body.name,
+        email: req.body.email,
+        userId: req.body.userId,
+        password: req.body.password,
+    })
+
+    const newUser = await user.save()
+    if(!newUser){
+        res.status(401).json({ code: 401, message: 'Invalid User Data'})
+    }else{
+        const { name, email, userId, isAdmin, createdAt } = newUser
+        res.json({
+            code: 200,
+            token: generateToken(newUser),
+            name, email, userId, isAdmin, createdAt
+        })
+    }
 }))
 
 router.post('/login', expressAsyncHandler(async (req, res, next) => {

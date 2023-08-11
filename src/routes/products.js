@@ -1,6 +1,7 @@
 const express = require('express')
 const Product = require('../models/Product')
 const expressAsyncHandler = require('express-async-handler')
+const { generateToken, isAuth, isAdmin } = require('../../auth')
 
 const router = express.Router()
 

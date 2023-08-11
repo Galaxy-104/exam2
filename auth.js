@@ -47,3 +47,9 @@ const isAdmin = (req, res, next) => {
         res.status(401).json({ code: 401, message: 'You are not admin user'})
     }
 }
+
+module.exports = {
+    generateToken,
+    isAuth,
+    isAdmin,
+}
