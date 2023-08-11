@@ -15,8 +15,17 @@ router.get('/', isAuth, expressAsyncHandler(async (req, res, next) => {
     }
 }))
 
-router.get('/:id', expressAsyncHandler(async (req, res, next) => {
-    res.json("특정 상품 조회")
+// 특정 상품 조회
+router.get('/:id', isAuth, expressAsyncHandler(async (req, res, next) => {
+    const product = await Product.findOne({
+        user: req.user._id,
+        _id: req.params.id
+    })
+    if(!product){
+        res.status(404).json({ code: 404, message: 'Product Not Found'})
+    }else{
+        res.json({ code: 200, product })
+    }
 }))
 
 // 상품 등록
