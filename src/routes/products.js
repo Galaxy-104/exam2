@@ -29,7 +29,7 @@ router.get('/:id', isAuth, expressAsyncHandler(async (req, res, next) => {
 }))
 
 // 이름으로 상품 조회
-router.get('/name/:name', isAuth, expressAsyncHandler(async (req, res, next) => {
+router.get('/search/:name', isAuth, expressAsyncHandler(async (req, res, next) => {
     const findAll = await Product.find({
         user: req.user._id,
     })
@@ -42,26 +42,28 @@ router.get('/name/:name', isAuth, expressAsyncHandler(async (req, res, next) => 
     })
 
     if(products.length === 0){
-        res.status(404).json({ code: 404, message: 'Product Not Found'})
+        next()
+        // res.status(404).json({ code: 404, message: 'Product Not Found'})
     }else{
         res.json({ code: 200, products })
     }
-}))
-
-// 카테고리로 상품 조회
-router.get('/category/:category', isAuth, expressAsyncHandler(async (req, res, next) => {
+}), expressAsyncHandler(async (req, res, next) => { // 카테고리로 상품 조회
     const products = await Product.find({
-        user: req.user._id,
-        category: req.params.category
-    })
-    
-    if(products.length === 0){
-        res.status(404).json({ code: 404, message: 'Product Not Found'})
-    }else{
-        res.json({ code: 200, products })
-    }
+            user: req.user._id,
+            category: req.params.name
+        })
+        
+        if(products.length === 0){
+            res.status(404).json({ code: 404, message: 'Product Not Found'})
+        }else{
+            res.json({ code: 200, products })
+        }
 }))
 
+
+router.get('/category/:category', isAuth, expressAsyncHandler(async (req, res, next) => {
+    
+}))
 
 // 상품 등록
 router.post('/', isAuth, expressAsyncHandler(async (req, res, next) => {
