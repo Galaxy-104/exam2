@@ -51,8 +51,26 @@ router.post('/logout', expressAsyncHandler(async (req, res, next) => {
     res.json("로그아웃")
 }))
 
-router.put('/:id', expressAsyncHandler(async (req, res, next) => {
-    res.json("사용자 정보 변경")
+// 사용자 정보 변경
+router.put('/:id', isAuth, expressAsyncHandler(async (req, res, next) => {
+    const user = await User.findById(req.params.id)
+    if(!user){
+        res.status(404).json({ code: 404, message: 'User Not Founded'})
+    }else{
+        user.name = req.body.name || user.name
+        user.email = req.body.email || user.email
+        user.password = req.body.password || user.password
+        user.isAdmin = req.body.isAdmin || user.isAdmin
+        user.lastModifiedAt = new Date()
+
+        const updatedUser = await user.save()
+        const { name, email, userId, isAdmin, createdAt, lastModifiedAt } = updatedUser
+        res.json({
+            code: 200,
+            token: generateToken(updatedUser),
+            name, email, userId, isAdmin, createdAt, lastModifiedAt
+        })
+    }
 }))
 
 router.delete('/:id', expressAsyncHandler(async (req, res, next) => {
