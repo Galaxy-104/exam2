@@ -58,8 +58,28 @@ router.post('/', isAuth, expressAsyncHandler(async (req, res, next) => {
     }
 }))
 
-router.put('/:id', expressAsyncHandler(async (req, res, next) => {
-    res.json("특정 상품 변경")
+// 특정 상품 변경
+router.put('/:id', isAuth, expressAsyncHandler(async (req, res, next) => {
+    const product = await Product.findOne({
+        user: req.user._id,
+        _id: req.params.id
+    })
+    if(!product){
+        res.status(404).json({ code: 404, message: 'Product Not Found'})
+    }else{
+        product.name = req.body.name || product.name
+        product.description = req.body.description || product.description
+        product.category = req.body.category || product.category
+        product.imgUrl = req.body.imgUrl || product.imgUrl
+        product.lastModifiedAt = new Date()
+    }
+
+    const updatedProduct = await product.save()
+    res.json({
+        code: 200,
+        message: 'Product updated',
+        updatedProduct
+    })
 }))
 
 router.delete('/:id', expressAsyncHandler(async (req, res, next) => {
