@@ -1,7 +1,7 @@
 const express = require('express')
 const Product = require('../models/Product')
 const expressAsyncHandler = require('express-async-handler')
-const { generateToken, isAuth, isAdmin } = require('../../auth')
+const { isAuth, isAdmin } = require('../../auth')
 
 const router = express.Router()
 
@@ -25,6 +25,26 @@ router.get('/:id', isAuth, expressAsyncHandler(async (req, res, next) => {
         res.status(404).json({ code: 404, message: 'Product Not Found'})
     }else{
         res.json({ code: 200, product })
+    }
+}))
+
+// 이름으로 상품 검색
+router.get('/name/:name', isAuth, expressAsyncHandler(async (req, res, next) => {
+    const findAll = await Product.find({
+        user: req.user._id,
+    })
+    const products = []
+    console.log(findAll)
+    findAll.forEach(function(product){
+        if(product.name.includes(req.params.name)){
+            products.push(product)
+        }
+    })
+
+    if(products.length === 0){
+        res.status(404).json({ code: 404, message: 'Product Not Found'})
+    }else{
+        res.json({ code: 200, products })
     }
 }))
 
