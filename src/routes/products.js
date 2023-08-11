@@ -5,8 +5,14 @@ const { generateToken, isAuth, isAdmin } = require('../../auth')
 
 const router = express.Router()
 
+// 전체 상품 조회
 router.get('/', isAuth, expressAsyncHandler(async (req, res, next) => {
-    res.json("전체 상품 조회")
+    const products = await Product.find({ user: req.user._id}).populate('user')
+    if(products.length === 0){
+        res.status(404).json({ code: 404, message: 'Fail to find products'})
+    }else{
+        res.json({ code: 200, products })
+    }
 }))
 
 router.get('/:id', expressAsyncHandler(async (req, res, next) => {
