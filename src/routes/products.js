@@ -5,7 +5,7 @@ const { generateToken, isAuth, isAdmin } = require('../../auth')
 
 const router = express.Router()
 
-router.get('/', expressAsyncHandler(async (req, res, next) => {
+router.get('/', isAuth, expressAsyncHandler(async (req, res, next) => {
     res.json("전체 상품 조회")
 }))
 
@@ -13,8 +13,34 @@ router.get('/:id', expressAsyncHandler(async (req, res, next) => {
     res.json("특정 상품 조회")
 }))
 
-router.post('/', expressAsyncHandler(async (req, res, next) => {
-    res.json("상품 등록")
+// 상품 등록
+router.post('/', isAuth, expressAsyncHandler(async (req, res, next) => {
+    const searchedProducts = await Product.findOne({
+        user: req.user._id,
+        name: req.body.name,
+    })
+    if(searchedProducts){
+        res.status(204).json({ code: 204, message: 'Already created'})
+    }else{
+        const product = new Product({
+            user: req.user._id,
+            name: req.body.name,
+            description: req.body.description,
+            category: req.body.category,
+            imgUrl: req.body.imgUrl
+        })
+
+        const newProduct = await product.save()
+        if(!newProduct){
+            res.status(401).json({ code: 401, message: "Failed to save todo"})
+        }else{
+            res.status(201).json({
+                code: 201,
+                message: 'New product created',
+                newProduct
+            })
+        }
+    }
 }))
 
 router.put('/:id', expressAsyncHandler(async (req, res, next) => {
