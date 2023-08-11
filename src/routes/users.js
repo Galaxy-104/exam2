@@ -13,7 +13,13 @@ router.post('/register', expressAsyncHandler(async (req, res, next) => {
         email: req.body.email,
         userId: req.body.userId,
         password: req.body.password,
+        isAdmin: req.body.isAdmin,
     })
+    if(user.isAdmin){
+        user.isAdmin = true
+    }else{
+        user.isAdmin = false
+    }
 
     const newUser = await user.save()
     if(!newUser){
@@ -60,7 +66,6 @@ router.put('/:id', isAuth, expressAsyncHandler(async (req, res, next) => {
         user.name = req.body.name || user.name
         user.email = req.body.email || user.email
         user.password = req.body.password || user.password
-        user.isAdmin = req.body.isAdmin || user.isAdmin
         user.lastModifiedAt = new Date()
 
         const updatedUser = await user.save()

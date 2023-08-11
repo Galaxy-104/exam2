@@ -47,7 +47,8 @@ router.get('/search/:name', isAuth, expressAsyncHandler(async (req, res, next) =
     }else{
         res.json({ code: 200, products })
     }
-}), expressAsyncHandler(async (req, res, next) => { // 카테고리로 상품 조회
+}), // 카테고리로 상품 조회
+expressAsyncHandler(async (req, res, next) => { 
     const products = await Product.find({
             user: req.user._id,
             category: req.params.name
@@ -58,11 +59,6 @@ router.get('/search/:name', isAuth, expressAsyncHandler(async (req, res, next) =
         }else{
             res.json({ code: 200, products })
         }
-}))
-
-
-router.get('/category/:category', isAuth, expressAsyncHandler(async (req, res, next) => {
-    
 }))
 
 // 상품 등록
