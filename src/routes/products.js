@@ -82,8 +82,21 @@ router.put('/:id', isAuth, expressAsyncHandler(async (req, res, next) => {
     })
 }))
 
-router.delete('/:id', expressAsyncHandler(async (req, res, next) => {
-    res.json("특정 상품 삭제")
+// 특정 상품 삭제
+router.delete('/:id', isAuth, expressAsyncHandler(async (req, res, next) => {
+    const product = await Product.findOne({
+        user: req.user._id,
+        _id: req.params.id
+    })
+    if(!product){
+        res.status(404).json({ code: 404, message: 'Product Not Found'})
+    }else{
+        await Product.deleteOne({
+            user: req.user._id,
+            _id: req.params.id
+        })
+        res.status(204).json({ code: 204, message: 'Product deleted successfully'})
+    }
 }))
 
 module.exports = router
