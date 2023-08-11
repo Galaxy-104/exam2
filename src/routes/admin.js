@@ -23,7 +23,7 @@ router.get('/users/:id', isAuth, isAdmin, expressAsyncHandler(async (req, res, n
 
 // 특정 유저 검색
 router.get('/users/search/:name', isAuth, isAdmin, expressAsyncHandler(async (req, res, next) => {
-    res.json("특정 유저 검색")
+    
 }))
 
 
