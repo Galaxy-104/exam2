@@ -28,8 +28,23 @@ router.post('/register', expressAsyncHandler(async (req, res, next) => {
     }
 }))
 
+// 로그인
 router.post('/login', expressAsyncHandler(async (req, res, next) => {
-    res.json("로그인")
+    console.log(req.body)
+    const loginUser = await User.findOne({
+        email: req.body.email,
+        password: req.body.password,
+    })
+    if(!loginUser){
+        res.status(401).json({ code: 401, message: 'Invalid ID or Password'})
+    }else{
+        const { name, email, userId, isAdmin, createdAt } = loginUser
+        res.json({
+            code: 200,
+            token: generateToken(loginUser),
+            name, email, userId, isAdmin, createdAt
+        })
+    }
 }))
 
 router.post('/logout', expressAsyncHandler(async (req, res, next) => {
